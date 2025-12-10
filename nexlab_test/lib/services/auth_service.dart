@@ -61,7 +61,7 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(seconds: 2));
     _currentUser = null;
   }
 

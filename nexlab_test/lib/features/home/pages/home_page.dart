@@ -21,28 +21,39 @@ class HomePage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Home'),
+          title: const Text(
+            'Home',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
           actions: [
             IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Logout',
+              color: Colors.black,
               onPressed: () {
                 showDialog(
                   context: context,
                   builder: (dialogContext) => AlertDialog(
-                    title: const Text('Logout'),
-                    content: const Text('Are you sure you want to logout?'),
+                    title: const Text(
+                      'Logout',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    content: const Text(
+                      'Are you sure you want to logout?',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
-                        child: const Text('Cancel'),
+                        child: const Text('No'),
                       ),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(dialogContext);
                           context.read<AuthBloc>().add(const LogoutRequested());
                         },
-                        child: const Text('Logout'),
+                        child: const Text('Yes'),
                       ),
                     ],
                   ),
@@ -127,6 +138,7 @@ class HomePage extends StatelessWidget {
               );
             }
 
+            // else return a loading indicator
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -146,13 +158,14 @@ class HomePage extends StatelessWidget {
             '$label:',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.black),
           ),
         ),
       ],

@@ -161,7 +161,6 @@ class _ContactFormPageState extends State<ContactFormPage> {
                   // Address field
                   TextFormField(
                     controller: _addressController,
-                    maxLines: 3,
                     decoration: const InputDecoration(
                       labelText: 'Address',
                       hintText: 'Enter address',

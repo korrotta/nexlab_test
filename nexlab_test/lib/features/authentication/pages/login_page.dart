@@ -184,16 +184,16 @@ class _LoginPageState extends State<LoginPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Test Credentials:',
+                              'Test Accounts:',
                               style: Theme.of(context).textTheme.titleSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                             const SizedBox(height: 8),
-                            const Text('📧 admin@nexlab.com / admin123'),
-                            const Text('📧 user@nexlab.com / user123'),
-                            const Text('📧 demo@nexlab.com / demo123'),
+                            const Text('admin@nexlab.com / admin123'),
+                            const Text('user@nexlab.com / user123'),
+                            const Text('demo@nexlab.com / demo123'),
                           ],
                         ),
                       ),

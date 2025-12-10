@@ -14,10 +14,17 @@ class ContactDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contact Details'),
+        title: const Text(
+          'Contact Details',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const Icon(
+              Icons.edit,
+              color: Colors.black,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -31,7 +38,10 @@ class ContactDetailPage extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.black,
+            ),
             onPressed: () => _showDeleteDialog(context),
           ),
         ],
@@ -46,7 +56,7 @@ class ContactDetailPage extends StatelessWidget {
                 color: Colors.deepPurple,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     spreadRadius: 2,
                     blurRadius: 5,
                   ),
@@ -132,7 +142,7 @@ class ContactDetailPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color),
