@@ -4,6 +4,7 @@ import '../../authentication/bloc/auth_bloc.dart';
 import '../../authentication/bloc/auth_event.dart';
 import '../../authentication/bloc/auth_state.dart';
 import '../../authentication/pages/login_page.dart';
+import '../../contacts/pages/contact_list_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -95,6 +96,28 @@ class HomePage extends StatelessWidget {
                               _buildInfoRow('Email', state.user.email),
                               const SizedBox(height: 8),
                             ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ContactListPage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.contacts),
+                        label: const Text('View Contacts'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),
