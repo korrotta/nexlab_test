@@ -3,6 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/contact_bloc.dart';
 import '../bloc/contact_event.dart';
 import '../bloc/contact_state.dart';
+import '../widgets/contact_list_tile.dart';
+import '../widgets/contact_search_bar.dart';
+import '../widgets/delete_contact_dialog.dart';
+import '../widgets/empty_contacts_view.dart';
 import 'contact_detail_page.dart';
 import 'contact_form_page.dart';
 
@@ -36,6 +40,11 @@ class _ContactListPageState extends State<ContactListPage> {
     }
   }
 
+  void _onClearSearch() {
+    _searchController.clear();
+    _onSearch('');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,30 +52,10 @@ class _ContactListPageState extends State<ContactListPage> {
         title: const Text('Contacts'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search contacts...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _onSearch('');
-                        },
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              onChanged: _onSearch,
-            ),
+          child: ContactSearchBar(
+            controller: _searchController,
+            onChanged: _onSearch,
+            onClear: _onClearSearch,
           ),
         ),
       ),
@@ -95,26 +84,7 @@ class _ContactListPageState extends State<ContactListPage> {
 
           if (state is ContactLoaded) {
             if (state.contacts.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.contacts_outlined,
-                      size: 80,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No contacts found',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return const EmptyContactsView();
             }
 
             return RefreshIndicator(
@@ -125,109 +95,41 @@ class _ContactListPageState extends State<ContactListPage> {
                 itemCount: state.contacts.length,
                 itemBuilder: (context, index) {
                   final contact = state.contacts[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.deepPurple,
-                        child: Text(
-                          contact.name[0].toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                  return ContactListTile(
+                    contact: contact,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<ContactBloc>(),
+                            child: ContactDetailPage(contact: contact),
                           ),
                         ),
-                      ),
-                      title: Text(
-                        contact.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              const Icon(Icons.email, size: 14),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  contact.email,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
+                      );
+                    },
+                    onEdit: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<ContactBloc>(),
+                            child: ContactFormPage(contact: contact),
                           ),
-                          Row(
-                            children: [
-                              const Icon(Icons.phone, size: 14),
-                              const SizedBox(width: 4),
-                              Text(contact.phone),
-                            ],
-                          ),
-                        ],
-                      ),
-                      trailing: PopupMenuButton(
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit),
-                                SizedBox(width: 8),
-                                Text('Edit'),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete, color: Colors.red),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Delete',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                        onSelected: (value) {
-                          if (value == 'edit') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<ContactBloc>(),
-                                  child: ContactFormPage(contact: contact),
-                                ),
-                              ),
-                            );
-                          } else if (value == 'delete') {
-                            _showDeleteDialog(
-                              context,
-                              contact.id,
-                              contact.name,
-                            );
-                          }
+                        ),
+                      );
+                    },
+                    onDelete: () {
+                      DeleteContactDialog.show(
+                        context: context,
+                        contactName: contact.name,
+                        onConfirm: () {
+                          context.read<ContactBloc>().add(
+                            DeleteContact(contact.id),
+                          );
                         },
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: context.read<ContactBloc>(),
-                              child: ContactDetailPage(contact: contact),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                      );
+                    },
                   );
                 },
               ),
@@ -250,30 +152,6 @@ class _ContactListPageState extends State<ContactListPage> {
           );
         },
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  void _showDeleteDialog(BuildContext context, String id, String name) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete Contact'),
-        content: Text('Are you sure you want to delete $name?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              context.read<ContactBloc>().add(DeleteContact(id));
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
       ),
     );
   }
