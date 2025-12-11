@@ -4,6 +4,8 @@ import '../../../models/contact_model.dart';
 import '../bloc/contact_bloc.dart';
 import '../bloc/contact_event.dart';
 import '../bloc/contact_state.dart';
+import '../widgets/contact_form_field.dart';
+import '../widgets/submit_button.dart';
 
 class ContactFormPage extends StatefulWidget {
   final ContactModel? contact;
@@ -96,35 +98,27 @@ class _ContactFormPageState extends State<ContactFormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Name field
-                  TextFormField(
+                  ContactFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      hintText: 'Enter full name',
-                      prefixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
-                    ),
+                    label: 'Name',
+                    hint: 'Enter full name',
+                    icon: Icons.person,
+                    enabled: !isLoading,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a name';
                       }
                       return null;
                     },
-                    enabled: !isLoading,
                   ),
                   const SizedBox(height: 16),
-
-                  // Email field
-                  TextFormField(
+                  ContactFormField(
                     controller: _emailController,
+                    label: 'Email',
+                    hint: 'Enter email address',
+                    icon: Icons.email,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter email address',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
-                    ),
+                    enabled: !isLoading,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an email';
@@ -134,69 +128,42 @@ class _ContactFormPageState extends State<ContactFormPage> {
                       }
                       return null;
                     },
-                    enabled: !isLoading,
                   ),
                   const SizedBox(height: 16),
-
-                  // Phone field
-                  TextFormField(
+                  ContactFormField(
                     controller: _phoneController,
+                    label: 'Phone',
+                    hint: 'Enter phone number',
+                    icon: Icons.phone,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone',
-                      hintText: 'Enter phone number',
-                      prefixIcon: Icon(Icons.phone),
-                      border: OutlineInputBorder(),
-                    ),
+                    enabled: !isLoading,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a phone number';
                       }
                       return null;
                     },
-                    enabled: !isLoading,
                   ),
                   const SizedBox(height: 16),
-
-                  // Address field
-                  TextFormField(
+                  ContactFormField(
                     controller: _addressController,
-                    decoration: const InputDecoration(
-                      labelText: 'Address',
-                      hintText: 'Enter address',
-                      prefixIcon: Icon(Icons.location_on),
-                      border: OutlineInputBorder(),
-                      alignLabelWithHint: true,
-                    ),
+                    label: 'Address',
+                    hint: 'Enter address',
+                    icon: Icons.location_on,
+                    maxLines: 3,
+                    enabled: !isLoading,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an address';
                       }
                       return null;
                     },
-                    enabled: !isLoading,
                   ),
                   const SizedBox(height: 24),
-
-                  // Submit button
-                  ElevatedButton(
-                    onPressed: isLoading ? null : _handleSubmit,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(
-                            isEditing ? 'Update Contact' : 'Add Contact',
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                  SubmitButton(
+                    onPressed: _handleSubmit,
+                    label: isEditing ? 'Update Contact' : 'Add Contact',
+                    isLoading: isLoading,
                   ),
                 ],
               ),
